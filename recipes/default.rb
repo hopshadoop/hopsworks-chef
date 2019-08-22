@@ -1076,3 +1076,4 @@ if node['rstudio']['enabled'].eql? "true"
     EOF
   end
 end
+

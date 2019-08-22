@@ -2,3 +2,6 @@
 LimitNOFILE=150000
 LimitNPROC=150000
 
+
+# 'as' is the memory limit. Default is 32GB
+<%= node['rstudio']['user'] %>   -    as  33554432

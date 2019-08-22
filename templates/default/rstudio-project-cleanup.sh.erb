@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+# This script allows Hopsworks to cleanup local directories for RStudio Servers.
+# There will be 1 notebook-server per ProjectUser.
+# This script can be run by hopsworks (running as user 'glassfish') as a sudo command as 'root'
+# The script should run as 'root' as the jupyter user does not have read privileges on the base directory for a user's
+# project and cannot do a recursive delete on the directory.
+#
+
+help() {
+    echo ""
+    echo "usage: $0 project"
+    echo "e.g., "
+    exit 1
+}
+
+if [ $# -ne 1 ]; then
+    help
+fi
+
+base="<%= node['rstudio']['base_dir'] %>/Projects/$1"
+# Sanity checks for injection attacks
+if [ ! -d "$base" ] ; then
+    echo "Invalid RSTUDIO_HOME directory: $base"
+    exit 1
+fi
+
+sudo rm -rf $base
+
+exit $?

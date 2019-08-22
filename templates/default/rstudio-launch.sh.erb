@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+help() {
+    echo ""
+    echo "usage: $0 rstudio_home hadoop_home java_home port logfile secret_dir certs_dir hadoop_username"
+    echo ""
+    exit 1
+}
+if [ $# -ne 8 ]; then
+  help
+fi
+
+function kill_named {
+    PID=$(ps aux | grep -i jupyter | grep "${RSTUDIO_HOME}" | grep "$PORT" | grep -v grep | awk '{print $2}')
+    if [ "$PID" != "" ] ; then
+	kill -9 "$PID" > /dev/null 2>&1
+        res=$?
+    else
+	res=$NOT_FOUND
+    fi
+    return "$res"
+}
+
+
+WAIT_START=20
+RSTUDIO_HOME=$HOME/$1
+export HADOOP_HOME=$2
+export JAVA_HOME=$3
+PORT=$4
+LOGFILE=$2/logs/$5
+SECRET_DIR=$6
+MATERIAL_DIRECTORY=$7
+export HADOOP_USER_NAME=$8
+export PID_FILE=${RSTUDIO_HOME}/rstudio.pid
+
+#
+# https://www.r-bloggers.com/shiny-server-series-part-2-running-shiny-on-multiple-ports/
+# https://github.com/OSC/bc_osc_rstudio_server/issues/1
+# 
+
+if [ -f "$PID_FILE" ] ; then
+ PID=$(cat "$PID_FILE")
+ kill -0 "$PID" > /dev/null 2>&1
+ if [ $? -eq 0 ] ; then
+     echo "A RStudio server is already running here. Kill it first."
+     exit 1
+ fi
+fi
+
+
+
+rm -f $2/rsession.sh
+rm -f $2/rsession.conf
+
+#setsid
+#  </dev/zero &> "$LOGFILE"  &
+
+
+HOME=$RSTUDIO_HOME <%= @rstudio_binary %> --rsession-config-file ${RSTUDIO_HOME}/rsession.conf --www-address 0.0.0.0 --www-port $PORT  --auth-none 1 --config-file <%= node['rstudio']['home'] %>/rserver.conf --server-working-dir ${RSTUDIO_HOME} --server-daemonize 1 --www-frame-origin same --rsession-path ${RSTUDIO_HOME}/rsession.sh </dev/zero &> "$LOGFILE" 
+echo $! > "$PID_FILE"
+
+exit $?

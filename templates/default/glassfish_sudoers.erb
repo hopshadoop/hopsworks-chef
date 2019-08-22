@@ -2,6 +2,9 @@
 <%= @user %> ALL=NOPASSWD: <%= @jupyter %>
 <%= @user %> ALL=NOPASSWD: <%= @jupyter_cleanup %>
 <%= @user %> ALL=NOPASSWD: <%= @jupyter_kernel %>
+<%= @user %> ALL=NOPASSWD: <%= @rstudio %>
+<%= @user %> ALL=NOPASSWD: <%= @rstudio_cleanup %>
+<%= @user %> ALL=NOPASSWD: <%= @rstudio_kernel %>
 <%= @user %> ALL=NOPASSWD: <%= @global_ca_sign %>
 <%= @user %> ALL=NOPASSWD: <%= @ca_keystore %>
 <%= @user %> ALL=NOPASSWD: <%= @tfserving %>

@@ -40,6 +40,12 @@ group node['serving']['group'] do
   not_if "getent group #{node['serving']['group']}"
 end
 
+group node['rstudio']['group'] do
+  action :create
+  not_if "getent group #{node['rstudio']['group']}"
+end
+
+
 #
 # hdfs superuser group is 'hdfs'
 #
@@ -68,7 +74,8 @@ group node['serving']['group'] do
   members ["#{node['hopsworks']['user']}"]
   append true
 end
-group node['jupyter']['group'] do
+
+group node['rstudio']['group'] do
   action :modify
   members ["#{node['hopsworks']['user']}"]
   append true
@@ -94,6 +101,15 @@ user node['jupyter']['user'] do
   shell "/bin/bash"
   manage_home true
   not_if "getent passwd #{node['jupyter']['user']}"
+end
+
+user node['rstudio']['user'] do
+  home node['rstudio']['base_dir']
+  gid node['rstudio']['group']
+  action :create
+  shell "/bin/bash"
+  manage_home true
+  not_if "getent passwd #{node['rstudio']['user']}"
 end
 
 user node['serving']['user'] do
@@ -123,6 +139,15 @@ directory node['jupyter']['base_dir']  do
   mode "770"
   action :create
 end
+
+#update permissions of base_dir to 770
+directory node['rstudio']['base_dir']  do
+  owner node['rstudio']['user']
+  group node['rstudio']['group']
+  mode "770"
+  action :create
+end
+
 
 directory node['hopsworks']['dir']  do
   owner node['hopsworks']['user']
@@ -526,6 +551,11 @@ template "#{theDomain}/bin/convert-ipython-notebook.sh" do
   action :create
 end
 
+
+#
+# jupyter
+#
+
 template "#{theDomain}/bin/jupyter.sh" do
   source "jupyter.sh.erb"
   owner node['glassfish']['user']
@@ -565,6 +595,58 @@ template "#{theDomain}/bin/jupyter-launch.sh" do
   mode "550"
   action :create
 end
+
+
+#
+# RStudio
+#
+
+template "#{theDomain}/bin/rstudio-project-cleanup.sh" do
+  source "rstudio-project-cleanup.sh.erb"
+  owner node['glassfish']['user']
+  group node['glassfish']['group']
+  mode "550"
+  action :create
+end
+
+template "#{theDomain}/bin/rstudio-kill.sh" do
+  source "rstudio-kill.sh.erb"
+  owner node['glassfish']['user']
+  group node['rstudio']['group']
+  mode "550"
+  action :create
+end
+
+template "#{theDomain}/bin/rstudio-launch.sh" do
+  source "rstudio-launch.sh.erb"
+  owner node['glassfish']['user']
+  group node['rstudio']['group']
+  mode "550"
+  action :create
+  case node['platform_family']
+  when "debian"
+    variables({
+        :rstudio_binary => "/usr/lib/rstudio-server/bin/rserver"
+              })
+  when "rhel"
+    variables({
+        :rstudio_binary => "/usr/lib/rstudio-server/bin/rserver"
+              })
+  end
+end
+
+template "/etc/pam.d/rstudio" do
+  source "rstudio.pam.erb"
+  owner "root"
+  mode "644"
+  action :create
+end
+
+
+
+#
+# tf-serving
+#
 
 template "#{theDomain}/bin/tfserving.sh" do
   source "tfserving.sh.erb"
@@ -742,12 +824,15 @@ template "/etc/sudoers.d/glassfish" do
               :user => node['glassfish']['user'],
               :ndb_backup =>  "#{theDomain}/bin/ndb_backup.sh",
               :jupyter =>  "#{theDomain}/bin/jupyter.sh",
+              :jupyter_cleanup =>  "#{theDomain}/bin/jupyter-project-cleanup.sh",
+              :jupyter_kernel =>  "#{theDomain}/bin/jupyter-install-kernel.sh",
+              :rstudio =>  "#{theDomain}/bin/rstudio.sh",              
+              :rstudio_cleanup =>  "#{theDomain}/bin/rstudio-project-cleanup.sh",
+              :rstudio_kernel =>  "#{theDomain}/bin/rstudio-install-kernel.sh",
               :tfserving =>  "#{theDomain}/bin/tfserving.sh",
               :sklearn_serving =>  "#{theDomain}/bin/sklearn_serving.sh",
               :conda_export =>  "#{theDomain}/bin/condaexport.sh",
               :tensorboard =>  "#{theDomain}/bin/tensorboard.sh",
-              :jupyter_cleanup =>  "#{theDomain}/bin/jupyter-project-cleanup.sh",
-              :jupyter_kernel =>  "#{theDomain}/bin/jupyter-install-kernel.sh",
               :global_ca_sign =>  "#{theDomain}/bin/global-ca-sign-csr.sh",
               :ca_keystore => "#{theDomain}/bin/ca-keystore.sh",
               :hive_user => node['hive2']['user'],
@@ -808,6 +893,31 @@ directory node["jupyter"]["base_dir"]  do
   mode "770"
   action :create
 end
+
+
+
+#
+# RStudio Configuration
+#
+
+user node["rstudio"]["user"] do
+  home node["rstudio"]["base_dir"]
+  gid node["rstudio"]["group"]
+  action :create
+  shell "/bin/bash"
+  manage_home true
+  not_if "getent passwd #{node["rstudio"]["user"]}"
+end
+
+#update permissions of base_dir to 770
+directory node["rstudio"]["base_dir"]  do
+  owner node["rstudio"]["user"]
+  group node["rstudio"]["group"]
+  mode "770"
+  action :create
+end
+
+
 
 bash "python_openssl" do
   user "root"
@@ -922,6 +1032,89 @@ template "#{theDomain}/bin/conda-command-ssh.sh" do
   action :create
 end
 
+
+#
+# Rstudio
+#
+
+if node['rstudio']['enabled'].eql? "true"
+
+  case node['platform']
+  when 'debian', 'ubuntu'
+
+    for r_packages in node['rstudio']['ubuntu_packages']
+      package r_packages
+    end
+
+    
+    remote_file "#{Chef::Config['file_cache_path']}/#{node['rstudio']['deb']}" do
+      user node['glassfish']['user']
+      group node['glassfish']['group']
+      source node['download_url'] + "/#{node['rstudio']['deb']}"
+      mode 0755
+      action :create
+    end
+
+    bash 'install_rstudio_debian' do
+      user "root"
+      code <<-EOF
+      set -e
+      cd #{Chef::Config['file_cache_path']}
+      apt-get install gdebi-core -y
+      gdebi -n #{node['rstudio']['deb']}
+    EOF
+    end
+
+    # https://github.com/rocker-org/rocker/blob/master/r-base/Dockerfile
+  #  bash 'install_rstudio_docker' do
+  #    user "root"
+  #    ignore_failure true
+  #    code <<-EOF
+  #    ln -s /usr/lib/R/site-library/littler/examples/install.r /usr/local/bin/install.r \
+  #    ln -s /usr/lib/R/site-library/littler/examples/install2.r /usr/local/bin/install2.r \
+  #    ln -s /usr/lib/R/site-library/littler/examples/installGithub.r /usr/local/bin/installGithub.r \
+  #    ln -s /usr/lib/R/site-library/littler/examples/testInstalled.r /usr/local/bin/testInstalled.r \
+  #    install.r docopt \
+  #    rm -rf /tmp/downloaded_packages/ /tmp/*.rds \
+  #  EOF
+  #  end
+    
+  when 'redhat', 'centos', 'fedora'
+
+    for r_packages in node['rstudio']['centos_packages']
+      package r_packages
+    end
+
+    remote_file "#{Chef::Config['file_cache_path']}/#{node['rstudio']['rpm']}" do
+      user node['glassfish']['user']
+      group node['glassfish']['group']
+      source node['download_url'] + "/#{node['rstudio']['rpm']}"
+      mode 0755
+      action :create
+    end
+    
+    bash 'install_rstudio_rhel' do
+      user "root"
+      code <<-EOF
+      set -e
+      cd #{Chef::Config['file_cache_path']}
+      yum install --nogpgcheck #{node['rstudio']['rpm']} -y
+    EOF
+    end
+
+  end
+
+  bash 'disable_rstudio_systemd_daemons' do
+    user "root"
+    ignore_failure true
+    code <<-EOF
+      systemctl stop rstudio-server
+      systemctl disable rstudio-server
+    EOF
+  end
+
+end
+
 template "#{theDomain}/bin/airflowOps.sh" do
   source "airflowOps.sh.erb"
   owner node['glassfish']['user']
@@ -929,5 +1122,6 @@ template "#{theDomain}/bin/airflowOps.sh" do
   mode 0710
   action :create
 end
+
 
 

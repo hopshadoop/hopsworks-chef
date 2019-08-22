@@ -16,6 +16,10 @@ REPLACE INTO `hopsworks`.`variables` VALUES ("service_jwt_exp_leeway_sec", "<%= 
 
 REPLACE INTO `hopsworks`.`variables` VALUES ("keepalive_timeout", "<%= node['glassfish']['http']['keep_alive_timeout']  %>");
 
+REPLACE INTO `hopsworks`.`variables` VALUES ("rstudio_user", "<%= node['rstudio']['user'] %>");
+REPLACE INTO `hopsworks`.`variables` VALUES ("rstudio_dir", "<%= node['rstudio']['base_dir'] %>");
+REPLACE INTO `hopsworks`.`variables` VALUES ("rstudio_cran_repo_url", "<%= node['rstudio']['cran_repo_url'] %>");
+
 REPLACE INTO `hopsworks`.`variables` VALUES ("jupyter_ws_ping_interval", "<%= node['jupyter']['ws_ping_interval'] %>");
 
 REPLACE INTO `hopsworks`.`variables` VALUES ("oauth_enabled", "<%= node['oauth']['enabled'] %>");
@@ -54,3 +58,4 @@ REPLACE INTO `hopsworks`.`variables` VALUES ("logstash_port_tf_serving", "<%= no
 REPLACE INTO `hopsworks`.`variables` VALUES ("logstash_port_sklearn_serving", "<%= node['logstash']['beats']['serving_sklearn_port'] %>");
 
 DELETE FROM `hopsworks`.`variables` WHERE `id`='recovery_path';
+

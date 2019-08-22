@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ $# -ne 3 ] ; then
+ echo "usage: $0 username secret_dir port"
+ exit 1
+fi
+ 
+<% @rserver_binary %> --rsession-config-file $2/rstudio/etc/rsession.conf --www-address 127.0.0.1 --www-port $3  --auth-none 1 --config-file $2/rstudio/etc/rserver.conf  --rsession-path ${HOME}/path/to/rsession_wrapper.sh
+

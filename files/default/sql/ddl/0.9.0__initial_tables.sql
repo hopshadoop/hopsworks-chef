@@ -1336,9 +1336,7 @@ DROP TABLE IF EXISTS `rstudio_settings`;
 CREATE TABLE `rstudio_settings` (
   `project_id` int(11) NOT NULL,
   `team_member` varchar(150) COLLATE latin1_general_cs NOT NULL,
-  `num_tf_ps` int(11) DEFAULT '1',
   `num_tf_gpus` int(11) DEFAULT '0',
-  `num_mpi_np` int(11) DEFAULT '1',
   `appmaster_cores` int(11) DEFAULT '1',
   `appmaster_memory` int(11) DEFAULT '1024',
   `num_executors` int(11) DEFAULT '1',

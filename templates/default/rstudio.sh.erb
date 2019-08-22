@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+
+# This script allows Hopsworks to start/kill/ping (check if alive) a Rstudio  Server.
+# There will be 1 notebook-server per ProjectUser.
+# This script can be run by hopsworks (running as user 'glassfish') as a sudo command whereupon
+# it changes user to 'rstudio' to run the command as user 'rstudio'.
+#
+
+help() {
+    echo ""
+    echo "usage: $0 [start rstudio_home hadoop_home java_home port logfile secret_dir certs_dir hadoop_username] | [kill rstudio_home pid port] | [ping pid] | [list]"
+    echo ""
+    exit 1
+}
+
+PORT=0
+DOMAINS_DIR=<%= node['glassfish']['domains_dir'] %>
+RSTUDIO_USER=<%= node['rstudio']['user'] %>
+RSTUDIO_GROUP=<%= node['rstudio']['group'] %>
+HOPSWORKS_USER=<%= node['hopsworks']['user'] %>
+
+if [ "$1" == "kill" ] ; then
+
+    if [ $# -ne 4 ]; then
+	help
+    fi
+
+    # Sanity checks for injection attacks
+    # Check that the port is an int (and not some injection attack)
+    re='^[0-9]+$'
+     if ! [[ $3 =~ $re ]] ; then
+      echo "error: Not a number" >&2
+      help
+    fi
+
+    re='^[0-9]+$'
+     if ! [[ $4 =~ $re ]] ; then
+      echo "error: Not a number" >&2
+      help
+    fi
+
+    # Don't kill the pid from this script, as it is run with 'sudo' privileges. Only do it as user 'rstudio'
+    su ${RSTUDIO_USER} -c "${DOMAINS_DIR}/domain1/bin/rstudio-kill.sh $2 $3 $4"
+
+    # Remove all the directories in the home rstudio folder for this project-user.
+    # if [ "$2" != "" ] ; then
+    # 	# Try and make sure some silly directory is not deleted, that this
+    # 	if [[ $2 = *"hops/rstudio/Projects"* ]]; then
+    #         sudo rm -rf "${2}"/../*
+    # 	fi
+    # fi
+    
+elif [ "$1" == "start" ] ; then
+
+    if [ $# -ne 9 ]; then
+	help
+    fi
+
+    # Sanity checks for injection attacks
+    if [ ! -d "$2" ] ; then
+	echo "Invalid RSTUDIO_HOME directory: $2"
+	exit 1
+    fi
+    if [ ! -d "$3" ] ; then
+	echo "Invalid HADOOP_HOME directory: $3"
+	exit 2
+    fi
+    if [ ! -f "${4}/bin/java" ] ; then
+	echo "Invalid JAVA_HOME directory: $4"
+	exit 3
+    fi
+
+    if [ ! -d "${9}" ] ; then
+	echo "Invalid certificates directory: $9"
+	exit 3
+    fi
+	
+    re='^[0-9]+$'
+    if ! [[ $6 =~ $re ]] ; then
+      echo "error: Not a number" >&2
+      help
+    fi
+
+    pid=$(sudo ps -ef | grep rstudio-server | grep "port=$6" | awk '{print $2}')
+
+    if [ "$pid" != "" ] ; then
+        su $RSTUDIO_USER -c "${DOMAINS_DIR}/domain1/bin/rstudio-kill.sh $2 $pid $6"
+	sleep 5
+    fi
+
+    # Should look like 'name-4444.log', where '4444' is the port number for the server
+    if [[ $7 =~ ^[a-zA-Z0-9_\.]{1,255}__[a-zA-Z0-9_\.]{3,32}\-[0-9]+\.log ]] ; then
+	echo "logfile ok"
+    else
+	echo "Invalid logfile parameter: $7"
+	exit 4
+    fi
+
+    parent=$(dirname "$8")
+    sudo chown -R "${HOPSWORKS_USER}":"${RSTUDIO_GROUP}" "$parent"
+    sudo chmod 0730 "$parent"
+    sudo mkdir -p "$8"
+    if [ $? -ne 0 ] ; then
+	echo "Error: could not create private_dir: $8"
+	exit 1
+    fi
+    sudo chmod -R 770 "$8"
+    sudo chown -R "${RSTUDIO_USER}":"${RSTUDIO_GROUP}" "$8"
+    
+    # These files below were created by hopsworks. Change ownership now to Rstudio (if needed)
+    # sudo chown -R ${RSTUDIO_USER}:${RSTUDIO_GROUP} $2
+    # Make the group of the files, the rstudio group so that they can write to the files
+    sudo chown -R "${HOPSWORKS_USER}":"${RSTUDIO_GROUP}" "$2/"..
+    if [ $? -ne 0 ] ; then
+	echo "Error: could not change ownership of config_dir for Rstudio: $2"
+	exit 1
+    fi
+    sudo chmod 0730 "$2/"..
+    sudo chown -R "${RSTUDIO_USER}":"${RSTUDIO_GROUP}" "$2"
+    sudo chmod -R 770 "$2"
+     
+    # Launch the rstudio server
+    su "${RSTUDIO_USER}" -c "${DOMAINS_DIR}/domain1/bin/rstudio-launch.sh $2 $3 $4 $5 $6 $7 $8 $9"
+
+elif [ "$1" == "ping" ] ; then
+    if [ $# -ne 2 ]; then
+	help
+    fi
+    sudo ps -ef | grep -v 'grep' | grep -i rstudio-server | grep "$2"
+    if [ $? -ne 0 ] ; then
+	echo "Error checking PID: $2"
+	echo "Are you trying to ping a non rstudio-server process?"
+	exit 12
+    fi
+    kill -0 "$2"
+
+# list 
+elif [ "$1" == "list" ] ; then
+    # This command will output line-separated PIDs for all running rstudio-servers into the tmp file, from where it is read by Hopsworks
+    sudo ps -ef | grep -v 'grep' | grep -i rstudio-server | awk '{print $2}' > /tmp/rstudioNotebookServer.pids
+else
+  help
+fi
+
+
+exit $?
