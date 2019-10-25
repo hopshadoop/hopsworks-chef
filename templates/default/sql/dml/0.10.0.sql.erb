@@ -54,3 +54,11 @@ REPLACE INTO `hopsworks`.`variables` VALUES ("logstash_port_tf_serving", "<%= no
 REPLACE INTO `hopsworks`.`variables` VALUES ("logstash_port_sklearn_serving", "<%= node['logstash']['beats']['serving_sklearn_port'] %>");
 
 DELETE FROM `hopsworks`.`variables` WHERE `id`='recovery_path';
+INSERT INTO `users` (`uid`, `username`, `password`, `email`, `fname`, `lname`, `activated`, `title`, `orcid`, `false_login`, `status`, `isonline`, `secret`, `validation_key`, `security_question`, `security_answer`, `mode`, `password_changed`, `notes`, `mobile`, `max_num_projects`, `num_active_projects`, `num_created_projects`, `two_factor`, `tours_state` , `salt`) VALUES
+(10003, 'iot0', 'fcb581887fcf61bf1a9e3ddd2f64297a9179efdd7ea32443021ea72e1f232b26', 'iot@hopsworks.ai', 'Hops', 'IoT', '2019-06-05 13:46:00', 'Mrs', '1234-5678-1234-5678', 0, 2, 0, 'V3WBPS4G2WMQ53VA', NULL, 'PET', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 0, '2019-06-05 13:46:00', NULL, '123456789', 30, 0, 0, 0, 0, '+9mTLmYSpnZROFEJEaednw8+gDH/s2J1QuRZy8okxW5myI/q8ek8Xu+ab5CyE9GzhWX6Sa4cr7KX8cAHi5IC4g==')
+on duplicate key update `username`="iot0";
+
+INSERT INTO `address` (`uid`, `address1`, `address2`, `address3`, `city`, `state`, `country`, `postalcode`) VALUES (10003, "Admin Office", "Teknikringen 14", "Vallhalevgen", "Stockholm lan", "Stockholm", "SE",  10044);
+
+INSERT INTO `organization` (`id`,`uid`,`org_name`, `website`, `contact_person`, `contact_email`, `department`, `phone`, `fax`) VALUES (3, 10003, "hopsworks", "www.hops.io", "Admin", "user@hops.site", "DataScience", "12345", "12345");
+REPLACE INTO variables VALUES ("blacklist_users", "<%= node['hopsworks']['blacklist_users'] %>");

@@ -70,6 +70,7 @@ default['hopsworks']['cauth_url']                = "#{node['download_url']}/#{no
 default['hopsworks']['war_url']                  = "#{node['download_url']}/hopsworks/#{node['hopsworks']['version']}/hopsworks-web.war"
 default['hopsworks']['ca_url']                   = "#{node['download_url']}/hopsworks/#{node['hopsworks']['version']}/hopsworks-ca.war"
 default['hopsworks']['ear_url']                  = "#{node['download_url']}/hopsworks/#{node['hopsworks']['version']}/hopsworks-ear.ear"
+default['hopsworks']['blacklist_users']             = "iot@hopsworks.ai" #comma-separated list of users that are not allowed to login
 
 default['hopsworks']['logsize']                  = "200000000"
 
