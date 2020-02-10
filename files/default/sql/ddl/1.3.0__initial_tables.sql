@@ -490,6 +490,8 @@ CREATE TABLE `hosts` (
   `num_gpus` tinyint(1) NOT NULL DEFAULT '0',
   `registered` tinyint(1) DEFAULT '0',
   `conda_enabled` tinyint(1) NOT NULL DEFAULT '1',
+  `zfs_key_rotated` varchar(255) COLLATE latin1_general_cs DEFAULT NULL,
+  `zfs_key` varchar(255) COLLATE latin1_general_cs DEFAULT NULL,  
   PRIMARY KEY (`id`),
   UNIQUE KEY `hostname` (`hostname`),
   UNIQUE KEY `host_ip` (`host_ip`)

@@ -416,7 +416,7 @@ default['hopsworks']['requests_verify'] = "true"
 # Provenance
 #
 # Provenance type can be set to MIN/FULL
-default['hopsworks']['provenance']['type']                            = "MIN"
+default['hopsworks']['provenance']['type']                    = "MIN"
 #define how big each archive round is - how many indices get cleaned
 default['hopsworks']['provenance']['archive']['batch_size']   = "10"
 #define how long to keep deleted items before archiving them - default 24h
@@ -426,3 +426,9 @@ default['hopsworks']['provenance']['cleaner']['period']        = "3600"
 
 # clients
 default['hopsworks']['client_path']           = "COMMUNITY"
+
+#
+# ZFS Encryption-at-rest
+#
+default['hopsworks']['zfs_key_rotation_enabled']              = "false"
+default['hopsworks']['zfs_key_rotation_interval']             = "14d"

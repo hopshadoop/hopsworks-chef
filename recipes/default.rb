@@ -16,6 +16,10 @@ if node['hopsworks']['dela']['enabled'] == "true"
   end
 end
 
+if not node['zfs']['pools'].eql?("")
+  node.override['hopsworks']['zfs_key_rotation_enabled'] = "true"
+end  
+
 public_ip=my_public_ip()
 hopsworks_db = "hopsworks"
 realmname = "kthfsrealm"

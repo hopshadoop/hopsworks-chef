@@ -1986,3 +1986,11 @@ attribute "hopsworks/audit_log_count",
 attribute "hopsworks/audit_log_file_type",
           :description => "Audit log file type. 'Text' (default)",
           :type => 'string'
+
+attribute "hopsworks/zfs_key_rotation_enabled",
+          :description => "Enable/disable automatic zfs key rotation",
+          :type => 'string'
+
+attribute "hopsworks/zfs_key_rotation_interval",
+          :description => "Interval for Hops zfs key rotation",
+          :type => 'string'
