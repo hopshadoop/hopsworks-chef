@@ -945,7 +945,7 @@ case node['platform_family']
  when 'debian'
    package "scala"
 
- when 'rhel'
+ when 'rhel', "amazon"
 
   scala_rpm_path="#{Chef::Config['file_cache_path']}/scala-#{node['scala']['version']}.rpm"
   remote_file scala_rpm_path do
@@ -1136,8 +1136,8 @@ end
 
 if node['rstudio']['enabled'].eql? "true"
 
-  case node['platform']
-  when 'debian', 'ubuntu'
+  case node['platform_family']
+  when 'debian'
     package "r-base"
 
     remote_file "#{Chef::Config['file_cache_path']}/#{node['rstudio']['deb']}" do
@@ -1158,7 +1158,7 @@ if node['rstudio']['enabled'].eql? "true"
     EOF
     end
 
-  when 'redhat', 'centos', 'fedora'
+  when 'redhat', "amazon"
 
     remote_file "#{Chef::Config['file_cache_path']}/#{node['rstudio']['rpm']}" do
       user node['glassfish']['user']

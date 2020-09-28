@@ -654,10 +654,10 @@ kagent_sudoers "start-llap" do
 end
 
 command=""
-case node['platform']
- when 'debian', 'ubuntu'
+case node['platform_family']
+ when 'debian'
    command='tensorflow_model_server'
- when 'redhat', 'centos', 'fedora'
+ when 'redhat', 'amazon'
    command='/opt/serving/bazel-bin/tensorflow_serving/model_servers/tensorflow_model_server'
 end
 
