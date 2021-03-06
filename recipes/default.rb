@@ -1025,32 +1025,6 @@ template "#{::Dir.home(node['hopsworks']['user'])}/.pip/pip.conf" do
   action :create
 end
 
-case node['platform_family']
- when 'debian'
-   package "scala"
-
- when 'rhel'
-
-  scala_rpm_path="#{Chef::Config['file_cache_path']}/scala-#{node['scala']['version']}.rpm"
-  remote_file scala_rpm_path do
-    source node['scala']['download_url']
-    owner 'root'
-    group 'root'
-    mode '0755'
-    action :create
-  end
-
-  bash 'scala-install-redhat' do
-    user "root"
-    cwd Chef::Config['file_cache_path']
-    code <<-EOF
-      set -e
-      yum install -y scala-#{node['scala']['version']}.rpm
-    EOF
-    not_if "which scala"
-  end
-end
-
 homedir = "/home/#{node['hopsworks']['user']}"
 #
 # Disable glassfish service, if node['services']['enabled'] is not set to true

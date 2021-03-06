@@ -398,9 +398,6 @@ default['hopsworks']['expat_dir']                    = "#{node['install']['dir']
 default['hopsworks']['featurestore_default_storage_format']   = "PARQUET"
 default['hopsworks']['featurestore_online']                   = "false"
 
-default['scala']['version']                   = "2.11.8"
-default['scala']['download_url']              = "#{node['download_url']}/scala-#{node['scala']['version']}.rpm"
-
 #
 # Glassfish Http configuration
 #
