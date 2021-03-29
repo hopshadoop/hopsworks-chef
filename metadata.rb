@@ -40,7 +40,7 @@ depends 'consul'
 depends 'ulimit'
 depends 'glassfish'
 depends 'kube-hops'
-
+depends 'onlinefs'
 
 recipe  "hopsworks::install", "Installs Glassfish"
 
