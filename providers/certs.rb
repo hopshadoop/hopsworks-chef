@@ -191,7 +191,29 @@ action :generate_int_certs do
         keytool -importkeystore -destkeystore keystore.jks -srckeystore cert_and_key.p12 -srcstoretype PKCS12 -alias internal -srcstorepass #{node['hopsworks']['master']['password']} -deststorepass #{node['hopsworks']['master']['password']} -destkeypass #{node['hopsworks']['master']['password']}
 
          keytool -import -noprompt -alias internal -file #{node['certs']['dir']}/certs/ca.cert.pem -keystore cacerts.jks -storepass #{node['hopsworks']['master']['password']}
+        
     EOH
   end
 
+end
+
+action :download_azure_ca_cert do
+  # Download azure root CA cert
+  remote_file '/tmp/DigiCertGlobalRootG2.crt' do
+    source "#{node['hopsworks']['azure-ca-cert']['download-url']}"
+    mode '0755'
+    action :create
+  end
+
+  # Add the certificate to the keystore.jks
+  bash "add_to_keystore" do 
+    user "root"
+    cwd "/tmp"
+    code <<-EOH
+      set -e
+      GFDOMAIN=#{node['glassfish']['domains_dir']}/domain1
+      # Import into the keystore
+      keytool -import -noprompt -alias digicertglobalrootg2 -file DigiCertGlobalRootG2.crt -keystore $GFDOMAIN/config/cacerts.jks -storepass #{node['hopsworks']['master']['password']}
+    EOH
+  end
 end

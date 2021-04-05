@@ -649,196 +649,6 @@ CREATE TABLE `message_to_user` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `meta_data`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `meta_data` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `data` varchar(12000) COLLATE latin1_general_cs NOT NULL,
-  `fieldid` int(11) NOT NULL,
-  `tupleid` int(11) NOT NULL,
-  PRIMARY KEY (`id`,`fieldid`,`tupleid`),
-  KEY `fieldid` (`fieldid`,`tupleid`),
-  CONSTRAINT `FK_404_411` FOREIGN KEY (`fieldid`,`tupleid`) REFERENCES `meta_raw_data` (`fieldid`,`tupleid`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=ndbcluster DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `meta_field_predefined_values`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `meta_field_predefined_values` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `fieldid` int(11) NOT NULL,
-  `valuee` varchar(250) COLLATE latin1_general_cs NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fieldid` (`fieldid`),
-  CONSTRAINT `FK_390_398` FOREIGN KEY (`fieldid`) REFERENCES `meta_fields` (`fieldid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=ndbcluster DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `meta_field_types`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `meta_field_types` (
-  `id` mediumint(9) NOT NULL AUTO_INCREMENT,
-  `description` varchar(50) COLLATE latin1_general_cs NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=ndbcluster AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `meta_fields`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `meta_fields` (
-  `fieldid` int(11) NOT NULL AUTO_INCREMENT,
-  `maxsize` int(11) DEFAULT NULL,
-  `name` varchar(255) COLLATE latin1_general_cs DEFAULT NULL,
-  `required` tinyint(1) DEFAULT NULL,
-  `searchable` tinyint(1) DEFAULT NULL,
-  `tableid` int(11) DEFAULT NULL,
-  `type` varchar(255) COLLATE latin1_general_cs DEFAULT NULL,
-  `ftype` mediumint(11) DEFAULT '3',
-  `description` varchar(250) COLLATE latin1_general_cs NOT NULL,
-  `fieldtypeid` mediumint(11) NOT NULL,
-  `position` mediumint(11) DEFAULT '0',
-  PRIMARY KEY (`fieldid`),
-  KEY `tableid` (`tableid`),
-  KEY `fieldtypeid` (`fieldtypeid`),
-  CONSTRAINT `FK_386_392` FOREIGN KEY (`tableid`) REFERENCES `meta_tables` (`tableid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `FK_384_393` FOREIGN KEY (`fieldtypeid`) REFERENCES `meta_field_types` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=ndbcluster DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `meta_inode_basic_metadata`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `meta_inode_basic_metadata` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `inode_pid` bigint(20) NOT NULL,
-  `inode_name` varchar(255) COLLATE latin1_general_cs NOT NULL,
-  `partition_id` bigint(20) NOT NULL,
-  `description` varchar(3000) COLLATE latin1_general_cs DEFAULT NULL,
-  `searchable` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `inode_pid` (`inode_pid`,`inode_name`,`partition_id`),
-  CONSTRAINT `FK_149_422` FOREIGN KEY (`inode_pid`,`inode_name`,`partition_id`) REFERENCES `hops`.`hdfs_inodes` (`parent_id`,`name`,`partition_id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=ndbcluster AUTO_INCREMENT=249 DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `meta_log`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `meta_log` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `meta_id` int(11) NOT NULL,
-  `meta_field_id` int(11) NOT NULL,
-  `meta_tuple_id` int(11) NOT NULL,
-  `meta_op_type` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=ndbcluster DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `meta_raw_data`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `meta_raw_data` (
-  `fieldid` int(11) NOT NULL,
-  `tupleid` int(11) NOT NULL,
-  PRIMARY KEY (`fieldid`,`tupleid`),
-  KEY `tupleid` (`tupleid`),
-  CONSTRAINT `FK_390_405` FOREIGN KEY (`fieldid`) REFERENCES `meta_fields` (`fieldid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `FK_400_406` FOREIGN KEY (`tupleid`) REFERENCES `meta_tuple_to_file` (`tupleid`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=ndbcluster DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `meta_tables`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `meta_tables` (
-  `tableid` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE latin1_general_cs DEFAULT NULL,
-  `templateid` int(11) NOT NULL,
-  PRIMARY KEY (`tableid`),
-  KEY `templateid` (`templateid`),
-  CONSTRAINT `FK_382_388` FOREIGN KEY (`templateid`) REFERENCES `meta_templates` (`templateid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=ndbcluster DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `meta_template_to_inode`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `meta_template_to_inode` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `template_id` int(11) NOT NULL,
-  `inode_pid` bigint(20) NOT NULL,
-  `inode_name` varchar(255) COLLATE latin1_general_cs NOT NULL,
-  `partition_id` bigint(20) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `template_id` (`template_id`),
-  KEY `inode_pid` (`inode_pid`,`inode_name`,`partition_id`),
-  CONSTRAINT `FK_149_416` FOREIGN KEY (`inode_pid`,`inode_name`,`partition_id`) REFERENCES `hops`.`hdfs_inodes` (`parent_id`,`name`,`partition_id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `FK_382_415` FOREIGN KEY (`template_id`) REFERENCES `meta_templates` (`templateid`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=ndbcluster DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `meta_templates`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `meta_templates` (
-  `templateid` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(250) COLLATE latin1_general_cs NOT NULL,
-  PRIMARY KEY (`templateid`)
-) ENGINE=ndbcluster DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `meta_tuple_to_file`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `meta_tuple_to_file` (
-  `tupleid` int(11) NOT NULL AUTO_INCREMENT,
-  `inodeid` bigint(20) NOT NULL,
-  `inode_pid` bigint(20) NOT NULL,
-  `inode_name` varchar(255) COLLATE latin1_general_cs NOT NULL,
-  `partition_id` bigint(20) NOT NULL,
-  PRIMARY KEY (`tupleid`),
-  KEY `inode_pid` (`inode_pid`,`inode_name`,`partition_id`),
-  CONSTRAINT `FK_149_402` FOREIGN KEY (`inode_pid`,`inode_name`,`partition_id`) REFERENCES `hops`.`hdfs_inodes` (`parent_id`,`name`,`partition_id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=ndbcluster DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `ndb_backup`
 --
 
@@ -1342,7 +1152,8 @@ CREATE TABLE `serving` (
   `lock_ip` varchar(15) COLLATE latin1_general_cs DEFAULT NULL,
   `lock_timestamp` bigint(20) DEFAULT NULL,
   `kafka_topic_id` int(11) DEFAULT NULL,
-  `serving_type` int(11) NOT NULL DEFAULT '0',
+  `model_server` int(11) NOT NULL DEFAULT '0',
+  `serving_tool` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Serving_Constraint` (`project_id`,`name`),
   KEY `user_fk` (`creator`),
@@ -1969,7 +1780,7 @@ CREATE TABLE `feature_store_job` (
 CREATE TABLE IF NOT EXISTS `jupyter_git_config` (
        `id` INT NOT NULL AUTO_INCREMENT,
        `remote_git_url` VARCHAR(255) NOT NULL,
-       `api_key_name` VARCHAR(125) NOT NULL,
+       `api_key_name` VARCHAR(125) DEFAULT NULL,
        `base_branch` VARCHAR(125),
        `head_branch` VARCHAR(125),
        `startup_auto_pull` TINYINT(1) DEFAULT 1,
@@ -2109,10 +1920,10 @@ CREATE TABLE IF NOT EXISTS `validation_rule` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) COLLATE latin1_general_cs DEFAULT NULL,
   `predicate` varchar(45) COLLATE latin1_general_cs DEFAULT NULL,
-  `value_type` varchar(45) COLLATE latin1_general_cs DEFAULT NULL,
+  `accepted_type` varchar(45) COLLATE latin1_general_cs DEFAULT NULL,
   `description` varchar(100) COLLATE latin1_general_cs DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_validation_rule` (`name`,`predicate`,`value_type`)
+  UNIQUE KEY `unique_validation_rule` (`name`,`predicate`,`accepted_type`)
 ) ENGINE=ndbcluster AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
 
 CREATE TABLE IF NOT EXISTS `feature_store_expectation` (

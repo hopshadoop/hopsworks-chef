@@ -40,6 +40,7 @@ depends 'consul'
 depends 'ulimit'
 depends 'glassfish'
 depends 'kube-hops'
+depends 'onlinefs'
 
 
 recipe  "hopsworks::install", "Installs Glassfish"
@@ -960,10 +961,6 @@ attribute "hopsworks/hdfs/storage_policy/base",
 attribute "hopsworks/hdfs/storage_policy/log",
           :description => "Set the project LOG_DIR storage policy. Default is HOT. Accepted values: CLOUD/DB/HOT",
           :type => 'string'
-# enable/disable metadata designer
-attribute "hopsworks/enable_metadata_designer",
-          :description => "Enable metadata designer. 'false' (default)",
-          :type => 'string'
 
 # Expat
 attribute "hopsworks/expat_url",
@@ -973,4 +970,9 @@ attribute "hopsworks/expat_url",
 #TensorBoard'
 attribute "tensorboard/max/reload/threads",
           :description => "The max number of threads that TensorBoard can use to reload runs. Not relevant for db read-only mode. Each thread reloads one run at a time.",
+          :type => "string"
+
+#Azure CA cert download url
+attribute "hopsworks/azure-ca-cert/download-url",
+          :description => "Azure CA cert download url. 'https://cacerts.digicert.com/DigiCertGlobalRootG2.crt' (default)",
           :type => "string"

@@ -51,7 +51,7 @@ elif [ "$1" == "gc" ] ; then
 elif [ "$1" == "delete-acr" ] ; then
   registry=$2
   image_prefix=$3
-  if [[ -z "$registry" ||  -z "$image_prefix" ]] then
+  if [[ -z "$registry" ||  -z "$image_prefix" ]] ; then
     echo ""
     echo "usage: delete-acr [registry_name image_prefix]"
     echo "deletes all images under the specified image_prefix inside the specified regitry"
@@ -70,6 +70,13 @@ elif [ "$1" == "delete-acr" ] ; then
       done
   done
 
+elif [ "$1" == "loginaz" ] ; then
+    if [ "$#" -ne 2 ] ; then
+	echo "Illegal number of parameters"
+	help
+    fi
+    az acr login --name $2
+    
 <% end -%>
 
 elif [ "$1" == "list" ] ; then
@@ -98,7 +105,7 @@ elif [ "$1" == "export" ] ; then
 
     docker pull $2 > /dev/null 2>&1
     docker run --rm $2 conda env export -n theenv
-
+    
 else
     help
 fi

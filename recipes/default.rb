@@ -1,3 +1,6 @@
+require 'digest'
+require 'securerandom'
+
 include_recipe "java"
 
 Chef::Recipe.send(:include, Hops::Helpers)
@@ -221,6 +224,10 @@ unless node['install']['cloud'].strip.empty?
   node.override['hopsworks']['reserved_project_names'] = "#{node['hopsworks']['reserved_project_names']},cloud"
 end
 
+# encrypt onlinefs user password
+onlinefs_salt = SecureRandom.base64(64)
+encrypted_onlinefs_password = Digest::SHA256.hexdigest node['onlinefs']['hopsworks']['password'] + onlinefs_salt
+
 for version in versions do
   # Template DML files
   template "#{theDomain}/flyway/dml/V#{version}__hopsworks.sql" do
@@ -246,7 +253,9 @@ for version in versions do
          :public_ip => public_ip,
          :dela_ip => dela_ip,
          :krb_ldap_auth => node['ldap']['enabled'].to_s == "true" || node['kerberos']['enabled'].to_s == "true",
-         :hops_version => get_hops_version(node['hops']['version'])
+         :hops_version => get_hops_version(node['hops']['version']),
+         :onlinefs_password => encrypted_onlinefs_password,
+         :onlinefs_salt => onlinefs_salt
     })
     action :create
   end
@@ -1161,6 +1170,11 @@ hopsworks_certs "generate-int-certs" do
   subject     "/CN=#{consul_helper.get_service_fqdn("hopsworks.glassfish")}/OU=0"
   action      :generate_int_certs
   not_if      (::File.exist?("#{node['hopsworks']['config_dir']}/internal_bundle.crt"))
+end
+
+hopsworks_certs "download_azure_ca_cert" do
+  action      :download_azure_ca_cert
+  not_if      (::File.exist?("/tmp/DigiCertGlobalRootG2.crt"))
 end
 
 # Force reload of the certificate

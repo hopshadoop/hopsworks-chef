@@ -1,30 +1,30 @@
 REPLACE INTO `hopsworks`.`variables`(`id`, `value`) VALUES ("yarn_default_payment_type", "<%= node['hopsworks']['yarn_default_payment_type'] %>");
 
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("HAS_MEAN", "VALUE", "Fractional", "Assert on the mean of a feature.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("HAS_MIN", "VALUE", "Fractional", "Assert on the min of a feature.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("HAS_MAX", "VALUE", "Fractional", "Assert on the max of a feature.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("HAS_SUM", "VALUE", "Fractional", "Assert on the sum of a feature.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("HAS_SIZE", "VALUE", "Integral", "Assert on the number of rows of the dataframe.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("HAS_COMPLETENESS", "VALUE", "Fractional", "Assert on the uniqueness of a single or combined set of features.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("HAS_UNIQUENESS", "VALUE", "Fractional", "Assert on the uniqueness of a single or combined set of features.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("HAS_DISTINCTNESS", "VALUE", "Fractional", "Assert on the distincness of a single or combined set of features.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("HAS_UNIQUE_VALUE_RATIO", "VALUE", "Fractional", "Assert on the unique value ratio of of a single or combined set of features.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("HAS_NUMBER_OF_DISTINCT_VALUES", "VALUE", "Integral", "Assert on the number of distinct values of a feature.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("HAS_ENTROPY", "VALUE", "Fractional", "Assert on the entropy of a feature.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("HAS_MUTUAL_INFORMATION", "LEGAL_VALUES", "Fractional", "Assert on the mutual information between two features.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("HAS_APPROX_QUANTILE", "VALUE", "Fractional", "Assert on the approximate quantile of a feature.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("HAS_STANDARD_DEVIATION", "VALUE", "Fractional", "Assert on the standard deviation of a feature.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("HAS_APPROX_COUNT_DISTINCT", "VALUE", "Fractional", "Assert on the approximate count distinct of a feature.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("HAS_CORRELATION", "LEGAL_VALUES", "Fractional", "Assert on the pearson correlcation between two features.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("HAS_PATTERN", "PATTERN", "String", "Assert on the average compliance of the feature to the regular expression.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("HAS_DATATYPE", "ACCEPTED_TYPE", "String", "Assert on the fraction of rows that conform to the given data type.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("IS_NON_NEGATIVE", "VALUE", "Fractional", "Assert on feature containing non negative values.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("IS_POSITIVE", "VALUE", "Boolean", "Assert on a feature containing non negative values.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("IS_LESS_THAN", "LEGAL_VALUES", "Fractional", "Assert on feature A values being less that feature B.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("IS_LESS_THAN_OR_EQUAL_TO", "LEGAL_VALUES", "Fractional", "Assert on feature A values being less or equal to those of feature B.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("IS_GREATER_THAN", "LEGAL_VALUES", "Fractional", "Assert on feature A values being greater than feature B.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("IS_GREATER_THAN_OR_EQUAL_TO", "LEGAL_VALUES", "Fractional", "Assert on feature A values being greater than or equal to those of feature B.");
-REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, value_type, description) VALUES ("IS_CONTAINED_IN", "LEGAL_VALUES", "String", "Assert that every non-null value of feature is contained in a set of predefined values.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("HAS_MEAN", "VALUE", "Fractional", "Assert on the mean of a feature.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("HAS_MIN", "VALUE", "Fractional", "Assert on the min of a feature.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("HAS_MAX", "VALUE", "Fractional", "Assert on the max of a feature.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("HAS_SUM", "VALUE", "Fractional", "Assert on the sum of a feature.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("HAS_SIZE", "VALUE", "Integral", "Assert on the number of rows of the dataframe.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("HAS_COMPLETENESS", "VALUE", "Fractional", "Assert on the uniqueness of a single or combined set of features.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("HAS_UNIQUENESS", "VALUE", "Fractional", "Assert on the uniqueness of a single or combined set of features.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("HAS_DISTINCTNESS", "VALUE", "Fractional", "Assert on the distincness of a single or combined set of features.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("HAS_UNIQUE_VALUE_RATIO", "VALUE", "Fractional", "Assert on the unique value ratio of of a single or combined set of features.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("HAS_NUMBER_OF_DISTINCT_VALUES", "VALUE", "Integral", "Assert on the number of distinct values of a feature.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("HAS_ENTROPY", "VALUE", "Fractional", "Assert on the entropy of a feature.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("HAS_MUTUAL_INFORMATION", "LEGAL_VALUES", "Fractional", "Assert on the mutual information between two features.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("HAS_APPROX_QUANTILE", "VALUE", "Fractional", "Assert on the approximate quantile of a feature.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("HAS_STANDARD_DEVIATION", "VALUE", "Fractional", "Assert on the standard deviation of a feature.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("HAS_APPROX_COUNT_DISTINCT", "VALUE", "Fractional", "Assert on the approximate count distinct of a feature.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("HAS_CORRELATION", "LEGAL_VALUES", "Fractional", "Assert on the pearson correlcation between two features.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("HAS_PATTERN", "PATTERN", "String", "Assert on the average compliance of the feature to the regular expression.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("HAS_DATATYPE", "ACCEPTED_TYPE", "String", "Assert on the fraction of rows that conform to the given data type.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("IS_NON_NEGATIVE", "VALUE", "Fractional", "Assert on feature containing non negative values.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("IS_POSITIVE", "VALUE", "Boolean", "Assert on a feature containing non negative values.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("IS_LESS_THAN", "LEGAL_VALUES", "Fractional", "Assert on feature A values being less that feature B.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("IS_LESS_THAN_OR_EQUAL_TO", "LEGAL_VALUES", "Fractional", "Assert on feature A values being less or equal to those of feature B.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("IS_GREATER_THAN", "LEGAL_VALUES", "Fractional", "Assert on feature A values being greater than feature B.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("IS_GREATER_THAN_OR_EQUAL_TO", "LEGAL_VALUES", "Fractional", "Assert on feature A values being greater than or equal to those of feature B.");
+REPLACE INTO `hopsworks`.`validation_rule` (name, predicate, accepted_type, description) VALUES ("IS_CONTAINED_IN", "LEGAL_VALUES", "String", "Assert that every non-null value of feature is contained in a set of predefined values.");
 
 DELETE FROM `hopsworks`.`variables` WHERE `id` = 'hops_verification_version';
 
@@ -35,3 +35,10 @@ REPLACE INTO `hopsworks`.`variables`(`id`, `value`) VALUES ("fs_job_activity_tim
 
 REPLACE INTO `hopsworks`.`variables`(`id`, `value`) VALUES ("pypi_indexer_timer_interval", "<%= node['hopsworks']['pypi_indexer_timer_interval'] %>");
 REPLACE INTO `hopsworks`.`variables`(`id`, `value`) VALUES ("pypi_simple_endpoint", "<%= node['hopsworks']['pypi_simple_endpoint'] %>");
+
+INSERT INTO `hopsworks`.`users`
+(`username`, `password`, `email`, `fname`, `lname`, `activated`, `title`, `orcid`, `false_login`, `isonline`, `secret`, `validation_key`, `mode`, `password_changed`, `notes`, `status`, `max_num_projects`, `two_factor`, `tours_state` , `salt`) VALUES
+('<%= node['onlinefs']['user'] %>', '<%= @onlinefs_password %>', '<%= node['onlinefs']['hopsworks']['email'] %>', 'OnlineFS', 'Server', '2021-03-16 16:17:00', 'Mr', '1234-5678-1234-5678', -1, 0, 'V3WBPS4G2WMQ53VA', NULL, 0, '2021-03-16 16:17:00', NULL, 2, 30, 0, 3, '<%= @onlinefs_salt %>')
+ON DUPLICATE KEY UPDATE `username`="onlinefs";
+
+INSERT IGNORE INTO `hopsworks`.`user_group` (`uid`, `gid`) SELECT `uid`, 1007 FROM `hopsworks`.`users` WHERE `username`='<%= node['onlinefs']['user'] %>';

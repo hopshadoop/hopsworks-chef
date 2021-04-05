@@ -13,6 +13,7 @@ include_attribute "hive2"
 include_attribute "hops"
 include_attribute "hops_airflow"
 include_attribute "kube-hops"
+include_attribute "onlinefs"
 
 default['hopsworks']['version']                  = node['install']['version']
 default['hopsworks']['current_version']          = node['install']['current_version']
@@ -449,5 +450,6 @@ default['hopsworks']['hdfs']['storage_policy']['base']        = "DB"
 # To not fill the SSDs with Logs files that nobody access frequently we set the StoragePolicy for the LOGS dir to be default HOT
 default['hopsworks']['hdfs']['storage_policy']['log']         = "HOT"
 
-default['hopsworks']['enable_metadata_designer']              = "false"
 default["hopsworks"]['check_nodemanager_status']              = "false"
+
+default['hopsworks']['azure-ca-cert']['download-url']         = "https://cacerts.digicert.com/DigiCertGlobalRootG2.crt"

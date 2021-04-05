@@ -14,7 +14,6 @@ bash 'letsencrypt-run' do
 EOF
 end
 
-
 bash 'letsencrypt-setup' do
     user "root"
     cwd "/tmp"
@@ -56,6 +55,7 @@ bash 'letsencrypt-setup' do
 
 	#{keytool} -import -noprompt -alias s1as -file s1as.cert -keystore cacerts.jks -storepass $KEYSTOREPW
 	#{keytool} -import -noprompt -alias glassfish-instance -file glassfish-instance.cert -keystore cacerts.jks -storepass $KEYSTOREPW
+
 	#Replace old Keystore & Truststore
 	cp -f keystore.jks cacerts.jks $GFDOMAIN/config/
 	chown -R #{node['glassfish']['user']} $GFDOMAIN/config/
