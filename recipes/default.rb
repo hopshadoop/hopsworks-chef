@@ -529,14 +529,23 @@ glassfish_conf = {
   'server.network-config.protocols.protocol.http-listener-2.ssl.ssl3-enabled' => false,
   'server.network-config.protocols.protocol.sec-admin-listener.ssl.ssl3-enabled' => false,
   'server.network-config.protocols.protocol.https-internal.ssl.ssl3-enabled' => false,
+  'server.admin-service.jmx-connector.system.ssl.ssl3-enabled' => false,
+  'server.iiop-service.iiop-listener.SSL.ssl.ssl3-enabled' => false,
+  'server.iiop-service.iiop-listener.SSL_MUTUALAUTH.ssl.ssl3-enabled' => false,
   # Disable TLS 1.0
   'server.network-config.protocols.protocol.http-listener-2.ssl.tls-enabled' => false,
   'server.network-config.protocols.protocol.sec-admin-listener.ssl.tls-enabled' => false,
   'server.network-config.protocols.protocol.https-internal.ssl.tls-enabled' => false,
+  'server.admin-service.jmx-connector.system.ssl.tls-enabled' => false,
+  'server.iiop-service.iiop-listener.SSL.ssl.tls-enabled' => false,
+  'server.iiop-service.iiop-listener.SSL_MUTUALAUTH.ssl.tls-enabled' => false,
   # Restrict ciphersuite
   'configs.config.server-config.network-config.protocols.protocol.http-listener-2.ssl.ssl3-tls-ciphers' => node['glassfish']['ciphersuite'],
   'configs.config.server-config.network-config.protocols.protocol.sec-admin-listener.ssl.ssl3-tls-ciphers' => node['glassfish']['ciphersuite'],
   'configs.config.server-config.network-config.protocols.protocol.https-internal.ssl.ssl3-tls-ciphers' => node['glassfish']['ciphersuite'],
+  'server.admin-service.jmx-connector.system.ssl.ssl3-tls-ciphers' => node['glassfish']['ciphersuite'],
+  'server.iiop-service.iiop-listener.SSL.ssl.ssl3-tls-ciphers' => node['glassfish']['ciphersuite'],
+  'server.iiop-service.iiop-listener.SSL_MUTUALAUTH.ssl.ssl3-tls-ciphers' => node['glassfish']['ciphersuite'],
   # Set correct thread-priority for the executor services - required during updates
   'resources.managed-executor-service.concurrent\/hopsExecutorService.thread-priority' => 10,
   'resources.managed-thread-factory.concurrent\/hopsThreadFactory.thread-priority' => 10,

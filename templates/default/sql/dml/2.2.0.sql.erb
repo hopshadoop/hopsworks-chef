@@ -42,3 +42,12 @@ INSERT INTO `hopsworks`.`users`
 ON DUPLICATE KEY UPDATE `username`="onlinefs";
 
 INSERT IGNORE INTO `hopsworks`.`user_group` (`uid`, `gid`) SELECT `uid`, 1007 FROM `hopsworks`.`users` WHERE `username`='<%= node['onlinefs']['user'] %>';
+
+REPLACE INTO `hopsworks`.`variables`(`id`, `value`) VALUES ("python_library_updates_monitor_interval", "<%= node['hopsworks']['python_library_updates_monitor_interval'] %>");
+
+REPLACE INTO `hopsworks`.`variables`(`id`, `value`) VALUES ("livy_startup_timeout", "<%= node['hopsworks']['livy_startup_timeout'] %>");
+REPLACE INTO `hopsworks`.`variables`(`id`, `value`) VALUES ("docker_job_mounts_list", "<%= node['hopsworks']['docker-job']['docker_job_mounts_list'] %>");
+REPLACE INTO `hopsworks`.`variables`(`id`, `value`) VALUES ("docker_job_mounts_allowed", "<%= node['hopsworks']['docker-job']['docker_job_mounts_allowed'] %>");
+REPLACE INTO `hopsworks`.`variables`(`id`, `value`) VALUES ("docker_job_uid_strict", "<%= node['hopsworks']['docker-job']['docker_job_uid_strict'] %>");
+
+REPLACE INTO `hopsworks`.`variables` VALUES ("kube_kfserving_installed", "<%= node['kube-hops']['kfserving']['enabled'] %>", 1);

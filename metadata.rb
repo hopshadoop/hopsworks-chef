@@ -4,7 +4,7 @@ maintainer_email "jdowling@kth.se"
 license          "Apache v2.0"
 description      "Installs/Configures HopsWorks, the UI for Hops Hadoop."
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          "2.2.0"
+version          "2.3.0"
 source_url       "https://github.com/logicalclocks/hopsworks-chef"
 
 
@@ -836,6 +836,10 @@ attribute "hopsworks/pypi_rest_endpoint",
           :description => "Url to PyPi REST API to query package information",
           :type => 'string'
 
+attribute "hopsworks/python_library_updates_monitor_interval",
+          :description => "Interval for monitoring new releases for libraries",
+          :type => 'string'
+
 ### TensorBoard
 
 attribute "hopsworks/tensorboard_max_last_accessed",
@@ -849,7 +853,7 @@ attribute "hopsworks/jwt/signature_algorithm",
           :type => 'string'
 
 attribute "hopsworks/jwt/lifetime_ms",
-          :description => "Default lifetime in ms for jwt expiration. (default 2.2.000)",
+          :description => "Default lifetime in ms for jwt expiration. (default 2.3.000)",
           :type => 'string'
 
 attribute "hopsworks/jwt/exp_leeway_sec",
@@ -976,3 +980,19 @@ attribute "tensorboard/max/reload/threads",
 attribute "hopsworks/azure-ca-cert/download-url",
           :description => "Azure CA cert download url. 'https://cacerts.digicert.com/DigiCertGlobalRootG2.crt' (default)",
           :type => "string"
+
+attribute "hopsworks/livy_startup_timeout",
+          :description => "timeout for livy sessions startup",
+          :type => "string"
+# Docker job
+attribute "hopsworks/docker-job/docker_job_mounts_list",
+					:description => "Host path directories that can be mounted with Docker jobs",
+					:type => "string"
+
+attribute "hopsworks/docker-job/docker_job_mounts_allowed",
+					:description => "Enable or disable mounting host paths with Docker jobs",
+					:type => "string"
+
+attribute "hopsworks/docker-job/docker_job_uid_strict",
+					:description => "Enable or disable strict mode for uig/gid of docker jobs. In strict mode, users cannot set the uid/gid of the job.",
+					:type => "string"
