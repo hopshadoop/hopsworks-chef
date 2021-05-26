@@ -394,6 +394,34 @@ unless exists_local("hops_airflow", "default")
 end
 
 include_recipe 'glassfish::default'
+
+directory node['data']['dir'] do
+  owner 'root'
+  group 'root'
+  mode '0775'
+  action :create
+  not_if { ::File.directory?(node['data']['dir']) }
+end
+
+directory node['hopsworks']['data_volume']['root_dir'] do
+  owner node['glassfish']['user']
+  group node['glassfish']['group']
+  mode '0750'
+  not_if { ::File.directory?(node['hopsworks']['data_volume']['root_dir'])}
+end
+
+directory node['hopsworks']['data_volume']['domain1'] do
+  owner node['glassfish']['user']
+  group node['glassfish']['group']
+  mode '0750'
+end
+
+directory node['hopsworks']['data_volume']['domain1_logs'] do
+  owner node['glassfish']['user']
+  group node['glassfish']['group']
+  mode '0750'
+end
+
 package 'openssl'
 
 if !::File.directory?("#{theDomain}/lib")
@@ -413,6 +441,41 @@ else
     end
   end
 end 
+
+# Domain and logs directory is created by glassfish cookbook.
+# Small hack to symlink logs directory
+directory node['hopsworks']['domain1']['logs'] do
+  recursive true
+  action :delete
+  not_if { conda_helpers.is_upgrade }
+end
+
+bash 'Move glassfish logs to data volume' do
+  user 'root'
+  code <<-EOH
+    set -e
+    mv -f #{node['hopsworks']['domain1']['logs']}/* #{node['hopsworks']['data_volume']['domain1_logs']}
+    mv -f #{node['hopsworks']['domain1']['logs']} #{node['hopsworks']['data_volume']['domain1_logs']}_deprecated
+  EOH
+  only_if { conda_helpers.is_upgrade }
+  only_if { File.directory?(node['hopsworks']['domain1']['logs'])}
+  not_if { File.symlink?(node['hopsworks']['domain1']['logs'])}
+end
+
+link node['hopsworks']['domain1']['logs'] do
+  owner node['glassfish']['user']
+  group node['glassfish']['group']
+  mode '0750'
+  to node['hopsworks']['data_volume']['domain1_logs']
+end
+
+directory node['hopsworks']['audit_log_dir'] do
+  owner node['glassfish']['user']
+  group node['glassfish']['group']
+  mode '0700'
+  action :create
+end
+
 
 mysql_connector = File.basename(node['hopsworks']['mysql_connector_url'])
 
@@ -442,14 +505,6 @@ remote_directory "#{theDomain}/templates" do
   files_owner node["glassfish"]["user"]
   files_group node["glassfish"]["group"]
   files_mode 0550
-end
-
-directory node['hopsworks']['audit_log_dir'] do
-  owner node['glassfish']['user']
-  group node['glassfish']['group']
-  recursive true
-  mode '0700'
-  action :create
 end
 
 if systemd == true
@@ -486,13 +541,19 @@ end
   end
 end
 
-ca_dir = node['certs']['dir']
-
-directory ca_dir do
+directory node['certs']['data_volume']['dir'] do
   owner node['glassfish']['user']
   group node['kagent']['certs_group']
   mode "755"
   action :create
+end
+
+ca_dir = node['certs']['dir']
+
+link ca_dir do
+  owner node['glassfish']['user']
+  group node['kagent']['certs_group']
+  to node['certs']['data_volume']['dir']
 end
 
 master_password_digest = Digest::SHA256.hexdigest node['hopsworks']['encryption_password']
