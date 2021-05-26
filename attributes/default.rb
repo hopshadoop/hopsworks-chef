@@ -51,6 +51,12 @@ default['glassfish']['base_dir']                 = node['glassfish']['install_di
 default['hopsworks']['domains_dir']              = node['install']['dir'].empty? ? node['hopsworks']['dir'] + "/domains" : node['install']['dir'] + "/domains"
 default['hopsworks']['domain_name']              = "domain1"
 default['glassfish']['domains_dir']              = node['hopsworks']['domains_dir']
+default['hopsworks']['domain1']['logs']          = "#{node['glassfish']['domains_dir']}/#{node['hopsworks']['domain_name']}/logs"
+
+# Data volume directories
+default['hopsworks']['data_volume']['root_dir']  = "#{node['data']['dir']}/hopsworks"
+default['hopsworks']['data_volume']['domain1']   = "#{node['hopsworks']['data_volume']['root_dir']}/#{node['hopsworks']['domain_name']}"
+default['hopsworks']['data_volume']['domain1_logs'] = "#{node['hopsworks']['data_volume']['domain1']}/logs"
 
 default['hopsworks']['staging_dir']              = node['hopsworks']['dir'] + "/staging"
 default['hopsworks']['conda_cache']              = node['hopsworks']['staging_dir'] + "/glassfish_conda_cache"
@@ -368,7 +374,7 @@ default['rstudio']['enabled']                        = "false"
 default['hopsworks']['kafka_max_num_topics']                   = '100'
 
 default['hopsworks']['audit_log_dump_enabled']       = "false"
-default['hopsworks']['audit_log_dir']                = "#{node['glassfish']['domains_dir']}/#{node['hopsworks']['domain_name']}/logs/audit"
+default['hopsworks']['audit_log_dir']                = "#{node['hopsworks']['domain1']['logs']}/audit"
 default['hopsworks']['audit_log_file_format']        = "server_audit_log%g.log"
 default['hopsworks']['audit_log_size_limit']         = "256000000"
 default['hopsworks']['audit_log_count']              = "10"
