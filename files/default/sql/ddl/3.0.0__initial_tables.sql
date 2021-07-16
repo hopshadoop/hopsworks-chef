@@ -292,6 +292,7 @@ CREATE TABLE `feature_group` (
   `on_demand_feature_group_id` INT(11) NULL,
   `cached_feature_group_id` INT(11) NULL,
   `validation_type` INT(11) NOT NULL DEFAULT '4',
+  `event_time` VARCHAR(63) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_version` (`feature_store_id`, `name`, `version`),
   KEY `feature_store_id` (`feature_store_id`),
